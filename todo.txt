@@ -1,0 +1,8 @@
+So, I am creating a new watermarking app with tkinter(maybe PySimpleGUI) and Pillow.
+
+1. Firstly, I need to create a logic for watermarking the photo
+
+2. Second I need to create a gui interface, where user can drag and drop the watermark.
+Also, user can upload an image and a watermark.
+
+3. After all manipulation with image is done. Image should be saved to a certain directory.
