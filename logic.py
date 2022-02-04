@@ -43,7 +43,3 @@ class Watermark:
         copied_image = self.image.copy()
         copied_image.paste(self.watermark, coordinates)  # merge watermark with the copied image
         copied_image.save(f"{save_directory}/{self.image_filename}.{'jpeg' if self.image_extension == 'jpeg' else 'png'}")
-
-
-image = Watermark("assets/images/myillustration.png", "assets/watermarks/owl-removebg-preview.png")
-image.create_a_watermark(coordinates=(500, 200), save_directory="C://CoolStuff")

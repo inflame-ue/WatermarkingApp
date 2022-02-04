@@ -19,6 +19,8 @@ class GUI:
         self.root = Tk()
         self.root.title("Watermarking App")
         self.root.resizable(width=True, height=True)
+        self.root.filename = None
+        # self.root.iconbitmap("")
 
         # frame as a placeholder for the image
         self.image_frame = ttk.Frame(self.root, padding=10, borderwidth=2)
@@ -28,7 +30,7 @@ class GUI:
         self.upload_button = ttk.Button(self.root, text="Upload Image", command=self.open_image)
         self.upload_button.grid(column=0, row=1, pady=10, padx=10)
 
-        self.save_button = ttk.Button(self.root, text="Save the Image", command=self.save_image)
+        self.save_button = ttk.Button(self.root, text="Save the Image")
         self.save_button.grid(column=2, row=1, pady=10, padx=10)
 
         self.exit_button = ttk.Button(self.root, text="Exit", command=self.root.quit)
@@ -43,12 +45,27 @@ class GUI:
         global image
 
         # get an image path
-        self.root.filename = filedialog.askopenfilename(initialdir=f"{os.getcwd()}", title="Upload Image", filetypes=(("png files", "*.png"), ("jpeg files", "*.jpeg")))
+        self.root.filename = filedialog.askopenfilename(initialdir=f"{os.getcwd()}",
+                                                        title="Upload Image",
+                                                        filetypes=(("png files", "*.png"),
+                                                                   ("jpeg files", "*.jpeg"),
+                                                                   ("jpg files", "*.jpg")))
 
         # put the image into a label
-        image = ImageTk.PhotoImage(Image.open(self.root.filename).resize((450, 350), Image.ANTIALIAS))
-        label_for_the_image = ttk.Label(self.image_frame, image=image)
-        label_for_the_image.grid(column=0, row=0, columnspan=3, padx=10, pady=10)
+        # image = ImageTk.PhotoImage(Image.open(self.root.filename).resize((450, 350), Image.ANTIALIAS))
+        # label_for_the_image = ttk.Label(self.image_frame, image=image)
+        # label_for_the_image.grid(column=0, row=0, columnspan=3, padx=10, pady=10)
 
-    def save_image(self):
-        return None
+    def display_watermarked_image(self, image_path):
+        """When the image is watermarked, this function displays it"""
+        # create a global(again for some reason)
+        global watermarked_image
+
+        # open it up
+        watermarked_image = ImageTk.PhotoImage(Image.open(image_path))
+
+        # display the image
+        label_for_the_watermarked_image = ttk.Label(self.image_frame, image=watermarked_image)
+        label_for_the_watermarked_image.grid(column=0, row=0, columnspan=3, pady=10, padx=10, sticky=E+W)
+
+
