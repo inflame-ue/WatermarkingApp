@@ -30,7 +30,7 @@ class GUI:
         self.upload_button = ttk.Button(self.root, text="Upload Image", command=self.open_image)
         self.upload_button.grid(column=0, row=1, pady=10, padx=10)
 
-        self.save_button = ttk.Button(self.root, text="Save the Image")
+        self.save_button = ttk.Button(self.root, text="Save the Image", command=lambda: self.display_watermarked_image())
         self.save_button.grid(column=2, row=1, pady=10, padx=10)
 
         self.exit_button = ttk.Button(self.root, text="Exit", command=self.root.quit)
@@ -67,5 +67,4 @@ class GUI:
         # display the image
         label_for_the_watermarked_image = ttk.Label(self.image_frame, image=watermarked_image)
         label_for_the_watermarked_image.grid(column=0, row=0, columnspan=3, pady=10, padx=10, sticky=E+W)
-
 
