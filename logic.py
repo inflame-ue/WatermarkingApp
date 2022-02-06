@@ -1,46 +1,109 @@
-# TODO: Create a watermark logic for the program
+# TODO: Create a gui for the program
 
 # imports
-import os
-import concurrent.futures
-import time
-from PIL import Image, ImageFilter
+from tkinter import *
+from tkinter import ttk
+from tkinter import filedialog
+from tkinter import messagebox
+from PIL import Image, ImageTk, ImageDraw, ImageFont
 from constants import *
+import os
 
 
-# classes block
-class Watermark:
-    """This class implements watermarking capabilities of the watermarking app"""
+# global variable for the watermarked_image
+watermarked_image = None
 
-    def __init__(self, image_filename, watermark_filename):
-        """
-        Loads up the image from the directory.
-        :param image_filename: If image is in the current working directory just specify the name, otherwise specify the full
-        path.
-        """
-        self.image = Image.open(image_filename)
-        self.watermark = Image.open(watermark_filename)
-        self.image_filename = os.path.splitext(image_filename)[0].split("/")[2]
-        self.image_extension = os.path.splitext(image_filename)[1]
-        self.watermark_filename = os.path.splitext(watermark_filename)[0].split("/")[2]
 
-        # resize watermark image
-        self.watermark.thumbnail((500, 500))
+# class block
+class WatermarkingApp:
+    """This class implements  for the image watermarking app"""
 
-    def __repr__(self):
-        return f"Watermark({self.image_filename}, {self.watermark_filename})"
+    def __init__(self):
+        """Init gui when instance is created"""
+        # some variables for the gui
+        self.path_for_watermarked_image = None
+        self.image = None
+        self.image_name = None
+        self.watermark_name = None
+        self.image_extension = None
+        self.image_filename = None
 
-    def __str__(self):
-        return self.image_filename
+        # root initialization
+        self.root = Tk()
+        self.root.title("Watermarking App")
+        self.root.resizable(width=True, height=True)
+        self.root.iconbitmap("assets/icons/play.ico")
 
-    def create_a_watermark(self, coordinates: tuple):
+        # frame as a placeholder for the image
+        self.image_frame = ttk.Frame(self.root, padding=10, borderwidth=2)
+        self.image_frame.grid(column=0, row=0, columnspan=3, pady=10, padx=10, sticky=E + W)
+
+        # buttons definition
+        self.upload_button = ttk.Button(self.root, text="Upload Image", command=self.open_image)
+        self.upload_button.grid(column=0, row=1, pady=10, padx=10)
+
+        self.watermark_button = ttk.Button(self.root, text="Watermark", command=self.create_a_watermark)
+        self.watermark_button.grid(column=1, row=1, pady=10, padx=10)
+
+        self.display_button = ttk.Button(self.root, text="Display", command=self.display_watermarked_image)
+        self.display_button.grid(column=2, row=1, pady=10, padx=10)
+
+        self.exit_button = ttk.Button(self.root, text="Exit", command=self.root.quit, padding=5)
+        self.exit_button.grid(column=1, row=2, pady=10, padx=10)
+
+        # root mainloop
+        self.root.mainloop()
+
+    def open_image(self):
+        """Uploads am image to the GUI interface using tkinter.filedialog"""
+        # get an image path
+        self.image_name = filedialog.askopenfilename(initialdir=f"{os.getcwd()}",
+                                                     title="Upload Image",
+                                                     filetypes=(("png files", "*.png"),
+                                                                ("jpeg files", "*.jpeg"),
+                                                                ("jpg files", "*.jpg")))
+
+    def display_watermarked_image(self):
+        """When the image is watermarked, this function displays it"""
+        global watermarked_image
+
+        try:
+            # open it up
+            watermarked_image = ImageTk.PhotoImage(
+                Image.open(self.path_for_watermarked_image).resize((1200, 800), Image.ANTIALIAS))
+        except AttributeError:
+            # give an error message box to the user, if user tries to display the image without uploading it
+            messagebox.showerror("No Such Image", "Image wasn't uploaded or it doesn't exist in the specified directory.")
+
+        # display the image
+        label_for_the_watermarked_image = ttk.Label(self.image_frame, image=watermarked_image)
+        label_for_the_watermarked_image.grid(column=0, row=0, columnspan=3, pady=10, padx=10, sticky=E + W)
+
+    def create_a_watermark(self):
         """
         This method puts a watermark on the image.
-        :param save_directory: directory, where you want to store your image
-        :param coordinates: x and y, that will specify where to place the watermark
         :return: nothing to return
         """
+        # images and information needed for watermarking
+        self.image = Image.open(self.image_name)
+        self.image_filename = os.path.splitext(self.image_name)[0].split("/")[-1]
+        self.image_extension = os.path.splitext(self.image_name)[1]
+
         # copy an image, doing this to not mess up any important images
         copied_image = self.image.copy()
-        copied_image.paste(self.watermark, coordinates)  # merge watermark with the copied image
-        copied_image.save(f"{SAVE_DIRECTORY}/{self.image_filename}.{'jpeg' if self.image_extension == 'jpeg' else 'png'}")
+
+        # draw a text watermark on it
+        draw = ImageDraw.ImageDraw(copied_image)
+        watermark_font = ImageFont.truetype("arial.ttf", 50)
+        draw.text((0, 0), 'watermark', (255, 255, 255), font=watermark_font)
+
+        # save the image to the save directory specified by the user
+        copied_image.save(
+            f"{SAVE_DIRECTORY}//{self.image_filename}.{'jpeg' if self.image_extension == 'jpeg' else 'png'}")
+
+        # return the path for the image
+        self.path_for_watermarked_image = f"{SAVE_DIRECTORY}//{self.image_filename}." \
+                                          f"{'jpeg' if self.image_extension == 'jpeg' else 'png'}"
+
+        # tel the use that image was saved successfully
+        messagebox.showinfo(title="Success", message="Watermarked Image was saved successfully")
