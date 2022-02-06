@@ -36,6 +36,7 @@ class Watermark:
     def create_a_watermark(self, coordinates: tuple):
         """
         This method puts a watermark on the image.
+        :param save_directory: directory, where you want to store your image
         :param coordinates: x and y, that will specify where to place the watermark
         :return: nothing to return
         """
