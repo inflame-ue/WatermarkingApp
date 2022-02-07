@@ -1,5 +1,3 @@
-# TODO: Create a gui for the program
-
 # imports
 from tkinter import *
 from tkinter import ttk
@@ -82,9 +80,11 @@ class WatermarkingApp:
             # give an error message box to the user, if user tries to display the image without uploading it
             messagebox.showerror("No Such Image",
                                  "Image wasn't uploaded or it doesn't exist in the specified directory.")
+            return None
 
-        # display the image
+        # display the image(it can be a bit messed up in the viewer because of the proportions)
         label_for_the_watermarked_image = ttk.Label(self.image_frame, image=watermarked_image)
+        label_for_the_watermarked_image.grid_forget()
         label_for_the_watermarked_image.grid(column=0, row=0, columnspan=3, pady=10, padx=10, sticky=E + W)
 
     def create_a_watermark(self):
@@ -103,7 +103,7 @@ class WatermarkingApp:
         # draw a text watermark on it
         draw = ImageDraw.ImageDraw(copied_image)
         watermark_font = ImageFont.truetype("arial.ttf", 50)
-        draw.text((0, 0), 'watermark', (255, 255, 255), font=watermark_font)
+        draw.text(COORDINATES_FOR_WATERMARK, WATERMARK_TEXT, WATERMARK_COLOR, font=watermark_font)
 
         # return the path for the image
         self.path_for_watermarked_image = f"{SAVE_DIRECTORY}//{self.image_filename}." \

@@ -1,5 +1,3 @@
-# TODO: Create a watermarking image desktop app using a GUI library and Pillow
-
 # imports
 from logic import WatermarkingApp
 
